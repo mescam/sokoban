@@ -1,8 +1,11 @@
 #include <allegro5/allegro.h>
 #include "../include/al_defs.h"
 #include "../include/graphics.h"
+<<<<<<< HEAD
 #include <stdio.h>
 #include <stdlib.h>
+=======
+>>>>>>> 86a40f0a9f068cc5f29c015aafb38816e42e7d88
 
 #define S_WIDTH 640
 #define S_HEIGHT 480
