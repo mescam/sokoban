@@ -4,13 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define S_WIDTH 640
-#define S_HEIGHT 480
 int main(void){
-  al_defs al;
-
-  al.width = S_WIDTH;
-  al.height = S_HEIGHT;
+  al_defs al;  
   
   if(!initialize_allegro(&al)){
     fprintf(stderr,"[Sokoban] I'm sorry\n");
@@ -18,23 +13,24 @@ int main(void){
   }
 
   //TODO: stuff
-  
+  printf("%d %d\n\n",al.width,al.height); 
   char choice=0;
-  bool pressedEnter=0;
+  bool pressed_enter=0;
   
   while(1){
-    drawMenu(&al, choice);
+    draw_menu(&al, choice);
     //remember about choice%options
-    handleKeyEvent(&al, &choice, &pressedEnter);
-    if(pressedEnter){
-      bool shouldQuit=0;
-      handleChoice(&al, choice, &shouldQuit);
+    handle_key_event(&al, &choice, &pressed_enter);
+    if(pressed_enter){
+      bool should_quit=0;
+      handle_choice(&al, choice, &should_quit);
 
-      if(shouldQuit)
+      if(should_quit)
         break;
-      pressedEnter=0;
+      pressed_enter=0;
       choice=0;
     }
+    //al_rest(10.0);
   }
 
 
