@@ -4,8 +4,8 @@ LDFLAGS=-lallegro -L/usr/local/lib -lallegro_image -lallegro_font -lallegro_ttf 
 
 all:sokoban
 
-sokoban: prepare main.o graphics.o misc.o
-	$(CC) $(LDFLAGS) $(CFLAGS) obj/main.o obj/graphics.o obj/misc.o -o bin/sokoban
+sokoban: prepare main.o graphics.o misc.o level.o
+	$(CC) $(LDFLAGS) $(CFLAGS) obj/main.o obj/graphics.o obj/misc.o obj/level.o -o bin/sokoban
 
 main.o:
 	$(CC) $(LDFLAGS) $(CFLAGS) -c src/main.c -o obj/main.o 
@@ -16,5 +16,7 @@ graphics.o:
 misc.o:
 	$(CC) $(LDFLAGS) $(CFLAGS) -c src/misc.c -o obj/misc.o
 
+level.o:
+	$(CC) $(LDFLAGS) $(CFLAGS) -c src/level.c -o obj/level.o
 prepare:
 	mkdir -p obj/
