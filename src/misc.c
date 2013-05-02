@@ -1,7 +1,7 @@
 #include "../include/al_defs.h"
 #include "../include/misc.h"
 #include "../include/level.h"
-
+#include "../include/graphics.h"
 #include <allegro5/allegro.h>
 #include <stdio.h>
 
@@ -71,18 +71,18 @@ void wait_for_key_enter(al_defs* al){
 }
 
 void handle_choice(al_defs* al, char choice, bool* should_quit){
-  level *l;
+  level *l = NULL;
   int i,j;
   switch (choice) {
     case 0: //new game
-      l = read_level("simple");
-      if(l==NULL) break;    
-      for(i = 0; i < l->h; i++){
-        for(j = 0; j < l->w; j++)
-          printf("%c",l->map[i][j]);
-        printf("\n");
-      }
-      free(l);
+      
+      do {
+        if(l!=NULL) free_level(l);
+        l = read_level("nowai");
+        if(l==NULL) break;
+      }while(play_level(al, l, "nowai"));
+      free_level(l);
+      
       break;
 
     case 1: //high scores
