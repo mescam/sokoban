@@ -26,7 +26,7 @@ void handle_key_event(al_defs* al, char* choice, bool* pressed_enter){
   ALLEGRO_EVENT ev;
   al_wait_for_event(al->queue, &ev);
 
-  if(ev.type == ALLEGRO_EVENT_KEY_UP){
+  if(ev.type == ALLEGRO_EVENT_KEY_DOWN){
     switch (ev.keyboard.keycode) {
       case ALLEGRO_KEY_UP:
         (*choice)--;
@@ -64,7 +64,7 @@ void wait_for_key_enter(al_defs* al){
   
   while(1){
     al_wait_for_event(al->queue, &ev);
-    if(ev.type == ALLEGRO_EVENT_KEY_UP && ev.keyboard.keycode==ALLEGRO_KEY_ENTER){
+    if(ev.type == ALLEGRO_EVENT_KEY_DOWN && ev.keyboard.keycode==ALLEGRO_KEY_ENTER){
       return;
     }
   }
@@ -78,9 +78,9 @@ void handle_choice(al_defs* al, char choice, bool* should_quit){
       
       do {
         if(l!=NULL) free_level(l);
-        l = read_level("nowai");
+        l = read_level("simple");
         if(l==NULL) break;
-      }while(play_level(al, l, "nowai"));
+      }while(play_level(al, l, "simple"));
       free_level(l);
       
       break;

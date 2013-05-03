@@ -52,6 +52,17 @@ void free_level(level *lvl) {
   free(lvl);
 }
 
+bool check_win_state(level *lvl) {
+  int i, j;
+  for (i = 0; i < lvl->h; i++) {
+    for (j = 0; j < lvl->w; j++) {
+      if(lvl->map[i][j]=='X' || lvl->map[i][j]=='C')
+        return false;
+    }
+  }
+  return true;
+}
+
 bool play_level(al_defs *al, level *lvl, char *name) {
   int counter=0;
   fprintf(stdout,"[Sokoban] playing level %s\n",name);
@@ -125,7 +136,11 @@ bool play_level(al_defs *al, level *lvl, char *name) {
             lvl->map[ni+off_i][nj+off_j]='S';
 
         }
-        lvl->map[ni][nj]='P';
+        if(lvl->map[ni][nj]=='X' || lvl->map[ni][nj]=='Z')
+          lvl->map[ni][nj]='C';
+        else
+          lvl->map[ni][nj]='P';
+
         if(original_map[pi][pj]=='X')
           lvl->map[pi][pj]='X';
         else
@@ -133,6 +148,10 @@ bool play_level(al_defs *al, level *lvl, char *name) {
 
         counter++; pi=ni; pj=nj;
 
+        if(check_win_state(lvl)) {
+          display_win_board(al, counter, name);
+          playing=false;
+        }
       }
     }
   }

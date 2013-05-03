@@ -7,7 +7,7 @@
 #include "../include/al_defs.h"
 #include "../include/graphics.h"
 #include "../include/level.h"
-
+#include "../include/misc.h"
 //TODO: clean it.
 
 bool initialize_allegro(al_defs* al){
@@ -124,11 +124,17 @@ void draw_tile(al_defs *al, int i, int j, level* lvl) {
       break;
       
     case 'Z': //chest in correct place 
-      al_draw_line(x1,y1,x2,y2,al_map_rgb(255,0,0),1.0);
-      al_draw_line(x1,y1+t,x2,y2-t,al_map_rgb(255,0,0),1.0);
+      al_draw_line(x1,y1,x2,y2,al_map_rgb(0,255,0),1.0);
+      al_draw_line(x1,y1+t,x2,y2-t,al_map_rgb(0,255,0),1.0);
 
       al_draw_filled_rectangle(x1+(t/3), y1+(t/3), x2-(t/3), y2-(t/3),
           al_map_rgb(255,255,0));
+      break;
+
+    case 'C': //player on destination point
+      al_draw_line(x1,y1,x2,y2,al_map_rgb(255,0,0),1.0);
+      al_draw_line(x1,y1+t,x2,y2-t,al_map_rgb(255,0,0),1.0);
+      al_draw_filled_circle(x1+(t/2), y1+(t/2), t/4, al_map_rgb(0,0,120));
       break;
   }
   return;
@@ -158,3 +164,20 @@ void draw_level_map(al_defs* al, level* lvl, const int counter, char *name) {
 }
 
 
+#define draw_text_win(X,Z) al_draw_textf(al->menu_font, al_map_rgb(255,255,255), al->width/2, 150+(X*32), ALLEGRO_ALIGN_CENTRE, text[X], Z);
+void display_win_board(al_defs *al, const int counter, char *name) {
+  al_clear_to_color(al_map_rgb(0,0,0));
+
+  al_draw_text(al->logo_font, al_map_rgb(255,255,255), al->width/2, 5, 
+      ALLEGRO_ALIGN_CENTRE, "sokoban");
+
+  char text[4][50] = {"Congratulations!","Map: %s","Steps: %d","Press Enter to continue..."};
+  
+  draw_text_win(0,0);
+  draw_text_win(1,name);
+  draw_text_win(2,counter);
+  draw_text_win(3,0);
+
+  al_flip_display();
+  wait_for_key_enter(al);
+}
