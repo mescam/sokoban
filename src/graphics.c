@@ -66,12 +66,14 @@ void load_resources(al_defs *al){
   al->queue = al_create_event_queue();
   al->logo_font = al_load_font("res/fonts/mc.ttf",32,ALLEGRO_ALIGN_CENTRE);
   al->menu_font = al_load_font("res/fonts/mc.ttf",21,ALLEGRO_ALIGN_CENTRE); 
+  al->hint_font = al_load_font("res/fonts/mc.ttf",12,ALLEGRO_ALIGN_CENTRE);
   al_register_event_source(al->queue, al_get_keyboard_event_source());
 }
 
 void unload_resources(al_defs *al){
   al_destroy_font(al->menu_font);
   al_destroy_font(al->logo_font);
+  al_destroy_font(al->hint_font);
   al_save_config_file("res/config.ini", al->conf);
   al_destroy_config(al->conf);
 }
@@ -112,7 +114,7 @@ void draw_tile(al_defs *al, int i, int j, level* lvl) {
       break;
 
     case 'S': // chest not in correct place
-      al_draw_filled_rectangle(x1+(t/3), y1+(t/3), x2-(t/3), y2-(t/3),
+      al_draw_filled_rectangle(x1+(t/4), y1+(t/4), x2-(t/4), y2-(t/4),
           al_map_rgb(255,255,0));
       break;
 
@@ -127,7 +129,7 @@ void draw_tile(al_defs *al, int i, int j, level* lvl) {
       al_draw_line(x1,y1,x2,y2,al_map_rgb(0,255,0),1.0);
       al_draw_line(x1,y1+t,x2,y2-t,al_map_rgb(0,255,0),1.0);
 
-      al_draw_filled_rectangle(x1+(t/3), y1+(t/3), x2-(t/3), y2-(t/3),
+      al_draw_filled_rectangle(x1+(t/4), y1+(t/4), x2-(t/4), y2-(t/4),
           al_map_rgb(255,255,0));
       break;
 
@@ -154,12 +156,15 @@ void draw_level_map(al_defs* al, level* lvl, const int counter, char *name) {
 
   int wy = 0.8f * al->height;
 
-  al_draw_line(0,wy,640,wy,al_map_rgb(255,0,0),1.0); //debug
+  //al_draw_line(0,wy,640,wy,al_map_rgb(255,0,0),1.0); //debug
   al_draw_textf(al->menu_font, al_map_rgb(255,255,255), 30, wy+10, 
       ALLEGRO_ALIGN_LEFT, "Steps: %d",counter);
   al_draw_textf(al->menu_font, al_map_rgb(255,255,255), al->width-30, 
       wy+10, ALLEGRO_ALIGN_RIGHT, "Map: %s",name);
 
+  al_draw_textf(al->hint_font, al_map_rgb(255,255,255), 10, al->height-20,
+      ALLEGRO_ALIGN_LEFT,
+      "R - reset    Esc - return to the main menu");
   al_flip_display();
 }
 

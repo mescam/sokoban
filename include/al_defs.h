@@ -9,6 +9,7 @@ typedef struct _al_defs{
   ALLEGRO_EVENT_QUEUE *queue;
   ALLEGRO_FONT *logo_font;
   ALLEGRO_FONT *menu_font;
+  ALLEGRO_FONT *hint_font;
   ALLEGRO_CONFIG *conf;
 } al_defs;
 

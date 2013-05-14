@@ -3,11 +3,12 @@
 #include "../include/level.h"
 #include "../include/graphics.h"
 #include <allegro5/allegro.h>
+#include <allegro5/allegro_audio.h>
+#include <allegro5/allegro_acodec.h>
 #include <stdio.h>
 
 void draw_menu(al_defs* al, char choice){
-
-  char options[5][12] = {"new game","high scores","editor","author","quit"};
+  char options[5][12] = {"new game","editor","author","quit","secret!"};
   al_clear_to_color(al_map_rgb(0,0,0));
 
   //flags.
@@ -59,9 +60,9 @@ void author_screen(al_defs* al){
   return;
 }
 
+
 void wait_for_key_enter(al_defs* al){
   ALLEGRO_EVENT ev;
-  
   while(1){
     al_wait_for_event(al->queue, &ev);
     if(ev.type == ALLEGRO_EVENT_KEY_DOWN && ev.keyboard.keycode==ALLEGRO_KEY_ENTER){
@@ -70,34 +71,51 @@ void wait_for_key_enter(al_defs* al){
   }
 }
 
+void inquisition(al_defs* al) {
+  al_install_audio();
+  al_init_acodec_addon();
+  al_reserve_samples(1);
+  ALLEGRO_SAMPLE *sample = al_load_sample("res/spanish.wav");
+  if(!sample) fprintf(stderr, "nie :< \n");
+  al_clear_to_color(al_map_rgb(0,0,0));
+  ALLEGRO_BITMAP* bmp = al_load_bitmap("res/troll.jpg");
+  al_draw_bitmap(bmp, (al->width-500)/2, (al->height-360)/2, 0);
+  al_flip_display();
+  al_play_sample(sample, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
+  wait_for_key_enter(al);
+  al_destroy_bitmap(bmp);
+  al_destroy_sample(sample);
+}
+
 void handle_choice(al_defs* al, char choice, bool* should_quit){
   level *l = NULL;
   int i,j;
   switch (choice) {
-    case 0: //new game
-      
+    case 0: //new game      
       do {
         if(l!=NULL) free_level(l);
-        l = read_level("simple");
+        l = read_level("nowai");
         if(l==NULL) break;
-      }while(play_level(al, l, "simple"));
+      }while(play_level(al, l, "nowai"));
       free_level(l);
       
       break;
 
-    case 1: //high scores
+    case 1: //editor
       break;
 
-    case 2: //editor
-      break;
-
-    case 3: //author
+    case 2: //author
       author_screen(al);
       break;
 
-    case 4: //quit
+    case 3: //quit
       *should_quit=1;
       break;
+
+    case 4: //inquisition
+      inquisition(al);
+      break;
+
   }
 }
 

@@ -141,7 +141,7 @@ bool play_level(al_defs *al, level *lvl, char *name) {
         else
           lvl->map[ni][nj]='P';
 
-        if(original_map[pi][pj]=='X')
+        if(original_map[pi][pj]=='X' || original_map[pi][pj]=='Z')
           lvl->map[pi][pj]='X';
         else
           lvl->map[pi][pj]=' ';
