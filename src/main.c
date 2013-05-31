@@ -20,7 +20,7 @@ int main(void){
   while(1){
     draw_menu(&al, choice);
     //remember about choice%options
-    handle_key_event(&al, &choice, &pressed_enter);
+    handle_key_event(&al, &choice, &pressed_enter, 5);
     if(pressed_enter){
       bool should_quit=0;
       handle_choice(&al, choice, &should_quit);

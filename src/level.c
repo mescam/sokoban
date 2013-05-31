@@ -93,6 +93,7 @@ bool play_level(al_defs *al, level *lvl, char *name) {
     ni=pi; nj=pj; //no changes by default
 
     if(ev.type == ALLEGRO_EVENT_KEY_DOWN){
+      printf("EVENT KEYCODE: %d\n",ev.keyboard.keycode);
       switch(ev.keyboard.keycode) {
         case ALLEGRO_KEY_ESCAPE:
           playing=false;

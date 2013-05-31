@@ -6,6 +6,7 @@
 #include <allegro5/allegro_audio.h>
 #include <allegro5/allegro_acodec.h>
 #include <stdio.h>
+#include <dirent.h>
 
 void draw_menu(al_defs* al, char choice){
   char options[5][12] = {"new game","editor","author","quit","secret!"};
@@ -13,7 +14,7 @@ void draw_menu(al_defs* al, char choice){
 
   //flags.
   al_draw_text(al->logo_font,al_map_rgb(254,255,255),al->width/2,20,ALLEGRO_ALIGN_CENTRE,"sokoban");
-  
+
   int i;
   for (i = 0; i < sizeof(options)/(sizeof(char)*12); i++) {
     ALLEGRO_COLOR c;
@@ -23,7 +24,7 @@ void draw_menu(al_defs* al, char choice){
   al_flip_display();
 }
 
-void handle_key_event(al_defs* al, char* choice, bool* pressed_enter){
+void handle_key_event(al_defs* al, char* choice, bool* pressed_enter, int count){
   ALLEGRO_EVENT ev;
   al_wait_for_event(al->queue, &ev);
 
@@ -31,12 +32,12 @@ void handle_key_event(al_defs* al, char* choice, bool* pressed_enter){
     switch (ev.keyboard.keycode) {
       case ALLEGRO_KEY_UP:
         (*choice)--;
-        if(*choice<0) *choice=4;
+        if(*choice<0) *choice=count-1;
         break;
 
       case ALLEGRO_KEY_DOWN:
         (*choice)++;
-        *choice = (*choice)%5;
+        *choice = (*choice)%count;
         break;
 
       case ALLEGRO_KEY_ENTER:
@@ -92,13 +93,15 @@ void handle_choice(al_defs* al, char choice, bool* should_quit){
   int i,j;
   switch (choice) {
     case 0: //new game      
-      do {
+      /*do {
         if(l!=NULL) free_level(l);
         l = read_level("nowai");
         if(l==NULL) break;
-      }while(play_level(al, l, "nowai"));
-      free_level(l);
-      
+        }while(play_level(al, l, "nowai"));
+        free_level(l);*/
+      available_levels(al);
+      //al_rest(10.0);
+
       break;
 
     case 1: //editor
@@ -119,3 +122,110 @@ void handle_choice(al_defs* al, char choice, bool* should_quit){
   }
 }
 
+typedef struct _level_list_mem {
+  char name[255];
+  struct _level_list_mem *prev, *next;
+} level_list_mem;
+
+typedef struct _level_list {
+  struct _level_list_mem *first, *last;
+} level_list;
+
+void add_to_level_list(char name[255], level_list *list) {
+  level_list_mem *mem = (level_list_mem*)malloc(sizeof(level_list_mem));
+  strncpy(mem->name, name, 255);
+  if(list->first==NULL) {
+    list->first = mem;
+    list->last = mem;
+    list->first->prev = list->first->next = mem;
+  }else{
+    list->first = mem;
+    mem->next = list->last->next;
+    mem->prev = list->last;
+    mem->next->prev = mem;
+    list->last->next = mem;
+  }
+}
+
+void free_level_list(level_list *list) {
+  level_list_mem *mem = list->first;
+  while(mem->next!=list->last) {
+    mem=mem->next;
+    free(mem->prev);
+  }
+  free(mem->next);
+  free(mem);
+}
+
+level_list *get_level_list() {
+  level_list *list = (level_list*) malloc(sizeof(level_list));
+  list->first=NULL;
+  list->last=NULL;
+
+  FILE *f = fopen("res/levels/levels","r");
+  int n, i;
+  fscanf(f, "%d", &n);
+  for(i=0;i<n;i++) {
+    char name[255];
+    fscanf(f, "%s", name);
+    add_to_level_list(name, list);
+  }
+  fclose(f);
+  return list;
+}
+
+
+void available_levels(al_defs *al) {
+
+  bool quit=false;
+  level_list *list = get_level_list();
+  level_list_mem *p = list->first;
+  level* l = NULL;
+
+  while(!quit) {
+    al_clear_to_color(al_map_rgb(0,0,0));
+    al_draw_text(al->logo_font,al_map_rgb(255,255,255),al->width/2,
+        20,ALLEGRO_ALIGN_CENTRE,"sokoban");
+    al_draw_text(al->menu_font,al_map_rgb(255,255,255), al->width/2, 
+        160, ALLEGRO_ALIGN_CENTRE,"Select your level:");
+
+    al_draw_textf(al->menu_font, al_map_rgb(255,0,0), al->width/2, 
+        al->height/2, ALLEGRO_ALIGN_CENTRE, "%s", p->name);
+
+    al_draw_text(al->hint_font, al_map_rgb(120, 120, 120), 10,
+        al->height-30, ALLEGRO_ALIGN_LEFT, 
+        "Use arrows to navigate, ENTER to choose, Esc to return to the main screen");
+    al_flip_display();
+
+    ALLEGRO_EVENT ev;
+    al_wait_for_event(al->queue, &ev);
+    if(ev.type == ALLEGRO_EVENT_KEY_DOWN) {
+      printf("EVENT KEYCODE: %d\n",ev.keyboard.keycode);
+      switch(ev.keyboard.keycode) {
+        case ALLEGRO_KEY_ESCAPE:
+          quit=true;
+          break;
+
+        case ALLEGRO_KEY_ENTER: 
+
+          do {
+            if(l!=NULL) free_level(l);
+            l = read_level(p->name);
+            if(l==NULL) break;
+          }while(play_level(al, l, p->name));
+          free_level(l);
+          l=NULL;
+          break;
+
+
+        case ALLEGRO_KEY_LEFT:
+          p=p->prev;
+          break;
+
+        case ALLEGRO_KEY_RIGHT:
+          p=p->next;
+          break;
+      }
+    }
+  }
+}
