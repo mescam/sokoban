@@ -3,6 +3,7 @@
 #include "../include/level.h"
 #include "../include/graphics.h"
 #include "../include/level_list.h"
+#include "../include/editor.h"
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_audio.h>
 #include <allegro5/allegro_acodec.h>
@@ -94,18 +95,12 @@ void handle_choice(al_defs* al, char choice, bool* should_quit){
   int i,j;
   switch (choice) {
     case 0: //new game      
-      /*do {
-        if(l!=NULL) free_level(l);
-        l = read_level("nowai");
-        if(l==NULL) break;
-        }while(play_level(al, l, "nowai"));
-        free_level(l);*/
       available_levels(al);
-      //al_rest(10.0);
-
       break;
 
     case 1: //editor
+      printf("editor...\n");
+      editor_logic(al);
       break;
 
     case 2: //author

@@ -73,6 +73,7 @@ bool play_level(al_defs *al, level *lvl, char *name) {
   //ni, nj - destination point
   char **original_map = (char**)malloc(lvl->h*sizeof(char*));
 
+  pi=pj=-1;
   //searching for player coords
   for(i = 0; i < lvl->h; i++){
     original_map[i] = (char*)malloc(lvl->w*sizeof(char));
@@ -83,6 +84,8 @@ bool play_level(al_defs *al, level *lvl, char *name) {
       original_map[i][j]=lvl->map[i][j];
     }
   }
+
+  if(pi<0 || pj<0) return false; //map is corrupted
 
   fprintf(stdout,"[Sokoban] found player at [%d][%d]\n",pi,pj);
   while(playing) {

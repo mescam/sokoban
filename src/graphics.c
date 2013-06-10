@@ -78,6 +78,24 @@ void unload_resources(al_defs *al){
   al_destroy_config(al->conf);
 }
 
+
+void draw_tile_border(al_defs *al, int i, int j, level *lvl) {
+  int y_offset = 50;
+  int wx = 0.8f * al->width;
+  int wy = 0.8f * al->height - y_offset;
+  int th = wy/lvl->h;
+  int tw = wx/lvl->w;
+  int t = (th>tw)?tw:th;
+  t=(t>40)?40:t;
+  int x_offset = (al->width - lvl->w*t)/2;
+  int x1=x_offset+(j*t), 
+      y1=y_offset+(i*t), 
+      x2=x_offset+((j+1)*t), 
+      y2=y_offset+((i+1)*t);
+  //god will hate me x2
+  al_draw_rectangle(x1,y1,x2,y2,al_map_rgb(0,0,255),2.0);
+}
+
 void draw_tile(al_defs *al, int i, int j, level* lvl) {
   int y_offset = 50;
   int wx = 0.8f * al->width;
@@ -185,4 +203,11 @@ void display_win_board(al_defs *al, const int counter, char *name) {
 
   al_flip_display();
   wait_for_key_enter(al);
+}
+
+void draw_background(al_defs *al) {
+  al_clear_to_color(al_map_rgb(0,0,0));
+  al_draw_text(al->logo_font,al_map_rgb(255,255,255),al->width/2,
+      5,ALLEGRO_ALIGN_CENTRE,"sokoban");
+
 }
