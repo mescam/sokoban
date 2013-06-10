@@ -144,9 +144,9 @@ void remove_level(char name[255]) {
   //awaiting command
   //a few has been chosen to stand
   //as one outnumbered by faaaar
-  char command[1024] = "cat res/levels/levels | grep -v \"";
+  char command[1024] = "cat res/levels/levels | grep -v \"^";
   strcat(command,name);
-  strcat(command,"\" > res/levels/levels.tmp; mv res/levels/levels.tmp res/levels/levels;");
+  strcat(command,"$\" > res/levels/levels.tmp; mv res/levels/levels.tmp res/levels/levels;");
   strcat(command," rm res/levels/");
   strcat(command,name);
   system(command);
