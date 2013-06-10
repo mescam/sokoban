@@ -133,23 +133,28 @@ void edit_level(al_defs *al, char name[255]) {
 void remove_level(char name[255]) {
   //dec level num
   FILE *f = fopen("res/levels/levels","r");
-  int d;
+  int i,d;
   fscanf(f,"%d",&d);
-  d--;
+  //char* maps = (char*)malloc(sizeof(char)*d);
+  char maps[300][255];
+  for(i=0;i<d;i++)
+    fscanf(f,"%s",maps[i]);
   fclose(f);
-  f = fopen("res/levels/levels","r+");
-  fprintf(f,"%d\n",d);
+  f = fopen("res/levels/levels","w");
+  fprintf(f,"%d\n",d-1);
+  for(i=0;i<d;i++){
+    if(strcmp(name,maps[i]))
+      fprintf(f,"%s\n",maps[i]);
+  }
   fclose(f);
   //so silent before the storm
   //awaiting command
   //a few has been chosen to stand
   //as one outnumbered by faaaar
-  char command[1024] = "cat res/levels/levels | grep -v \"^";
-  strcat(command,name);
-  strcat(command,"$\" > res/levels/levels.tmp; mv res/levels/levels.tmp res/levels/levels;");
-  strcat(command," rm res/levels/");
-  strcat(command,name);
-  system(command);
+  //free(maps);
+  char p[255+50] = "res/levels/";
+  strcat(p,name);
+  remove(p);
 }
 
 
@@ -193,15 +198,18 @@ void make_blank_level(char name[255], unsigned int x, unsigned int y) {
   f = fopen("res/levels/levels","r");
   int d;
   fscanf(f,"%d",&d);
-  d++;
+  char maps[100][255];// = (char*)malloc(sizeof(char)*d);
+  for(i=0;i<d;i++){
+    fscanf(f,"%s",maps[i]);
+  }
   fclose(f);
-  f = fopen("res/levels/levels","r+");
-  fprintf(f,"%d\n",d);
-  fclose(f);
-  //append to levels
-  f = fopen("res/levels/levels","a+");
+  f = fopen("res/levels/levels","w");
+  fprintf(f,"%d\n",d+1);
+  for(i=0;i<d;i++)
+    fprintf(f,"%s\n",maps[i]);
   fprintf(f,"%s\n",name);
   fclose(f);
+  //free(maps);
 }
 
 bool check_if_level_exists(char name[255]) {
